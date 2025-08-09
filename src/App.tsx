@@ -25,12 +25,12 @@ function App() {
     const findBoost = activatedBoosts.find((el: any) => el.id == id)
     if (findBoost) {
       // @ts-ignore
-      tg.WebApp.showAlert("Такой буст уже есть");
+      tg.showAlert(`Такой буст уже есть!`);
     }
     else {
       if (price > click) {
         // @ts-ignore
-        tg.WebApp.showAlert("Мало кликов!");
+        tg.showAlert(`Мало кликов!`);
       }
       else {
         setClick((prev) => prev - price)
