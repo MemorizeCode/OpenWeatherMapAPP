@@ -29,6 +29,7 @@ function App() {
       else {
         setClick((prev) => prev - price)
         setClickPlus((prev) => prev + click)
+        // @ts-ignore
         setActivatedBoosts([...activatedBoosts, { id: id }])
 
       }
