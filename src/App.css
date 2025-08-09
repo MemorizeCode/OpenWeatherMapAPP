@@ -1,0 +1,189 @@
+
+:root {
+    --primary-color: #61dafb;
+    --secondary-color: #282c34;
+    --accent-color: #ff6b6b;
+    --text-color: #ffffff;
+    --bg-color: #1a1a1a;
+  }
+  
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
+  
+  .app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .header h1 {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .header p {
+    color: #aaa;
+    font-size: 1rem;
+  }
+  
+
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+    width: 100%;
+  }
+  
+  .click-display {
+    background: rgba(40, 44, 52, 0.8);
+    border-radius: 20px;
+    padding: 20px 40px;
+    margin-bottom: 30px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+  }
+  
+  .click-display h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #aaa;
+  }
+  
+  .counter {
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin: 10px 0;
+  }
+  
+
+  .click-button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.5rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 0 rgba(214, 69, 69, 0.8);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 30px;
+  }
+  
+  .click-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 rgba(214, 69, 69, 0.8);
+  }
+  
+  .click-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 rgba(214, 69, 69, 0.8);
+  }
+  
+  .click-button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+  }
+  
+  .click-button:focus:not(:active)::after {
+    animation: ripple 0.6s ease-out;
+  }
+  
+
+   .shop {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    color: #aaa;
+    font-size: 0.9rem;
+  }
+
+  .shop button {
+    width: 160px;
+    background-color: rgb(3, 163, 102) ;
+    color: white;
+    font-weight: bolder;
+    font-size: 12px;
+    height: 35px;
+    border: none;
+    border-radius: 25px;
+  }
+  
+  .shop, .boost {
+    margin-top: 10px;
+    text-align: center;
+  }
+
+
+  .footer {
+    margin-top: auto;
+    color: #666;
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 20px 0;
+  }
+  
+
+  .pulse {
+    animation: pulse 0.3s ease-in-out;
+  }
+  
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  
+  @keyframes ripple {
+    0% {
+      transform: scale(0, 0);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(20, 20);
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .header h1 {
+      font-size: 2rem;
+    }
+    
+    .counter {
+      font-size: 2.5rem;
+    }
+    
+    .click-button {
+      padding: 12px 30px;
+      font-size: 1.2rem;
+    }
+  }
