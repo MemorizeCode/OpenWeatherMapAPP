@@ -21,16 +21,22 @@ function App() {
     setTimeout(() => setIsAnimating(false), 300)
   }
 
-  const byBoost = (price: number, click: number, id: number) => {
+  const byBoost = (price: number, plusClick: number, id: number) => {
     const findBoost = activatedBoosts.find((el: any) => el.id == id)
-    if (findBoost) console.log('activ')
+    if (findBoost) {
+      // @ts-ignore
+      tg.WebApp.showAlert("Такой буст уже есть");
+    }
     else {
-      if (price > click) console.log("malo money")
+      if (price > click) {
+        // @ts-ignore
+        tg.WebApp.showAlert("Мало кликов!");
+      }
       else {
         setClick((prev) => prev - price)
-        setClickPlus((prev) => prev + click)
+        setClickPlus((prev) => prev + plusClick)
         // @ts-ignore
-        setActivatedBoosts([...activatedBoosts, { id: id }])
+        setActivatedBoosts([...activatedBoosts, { id: id, title: `+${plusClick} clicks` }])
 
       }
     }
