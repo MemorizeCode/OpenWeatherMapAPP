@@ -15,15 +15,13 @@ const Canvas = () => {
         const context = canvas.getContext('2d');
         if (!context) return;
 
-
         const resizeCanvas = () => {
-            canvas.width = window.innerWidth * 0.8;
-            canvas.height = window.innerHeight * 0.7;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight - 80;
         };
 
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-
 
         const clearCanvas = () => {
             context.fillStyle = '#ffffff';
@@ -37,7 +35,22 @@ const Canvas = () => {
         };
     }, []);
 
-    const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+
+    const getCanvasCoordinates = (clientX: number, clientY: number) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return { x: 0, y: 0 };
+
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+
+        return {
+            x: (clientX - rect.left) * scaleX,
+            y: (clientY - rect.top) * scaleY
+        };
+    };
+
+    const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
@@ -45,7 +58,19 @@ const Canvas = () => {
         if (!context) return;
 
         setIsDrawing(true);
-        draw(e, context);
+        
+        let clientX, clientY;
+        if ('touches' in e) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
+
+        const { x, y } = getCanvasCoordinates(clientX, clientY);
+        context.beginPath();
+        context.moveTo(x, y);
     };
 
     const endDrawing = () => {
@@ -59,15 +84,22 @@ const Canvas = () => {
         context.beginPath();
     };
 
-    const draw = (e: React.MouseEvent<HTMLCanvasElement>, context: CanvasRenderingContext2D) => {
+    const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>, context: CanvasRenderingContext2D) => {
         if (!isDrawing) return;
 
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        let clientX, clientY;
+        if ('touches' in e) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
+
+        const { x, y } = getCanvasCoordinates(clientX, clientY);
 
         context.lineWidth = brushSize;
         context.lineCap = 'round';
@@ -96,8 +128,6 @@ const Canvas = () => {
         context.fillStyle = '#ffffff';
         context.fillRect(0, 0, canvas.width, canvas.height);
     };
-
-
 
     return (
         <div className="canvas-app">
@@ -161,26 +191,13 @@ const Canvas = () => {
                         if (context) draw(e, context);
                     }}
                     onMouseLeave={endDrawing}
-                    onTouchStart={(e) => {
-                        const touch = e.touches[0];
-                        const mouseEvent = new MouseEvent('mousedown', {
-                            clientX: touch.clientX,
-                            clientY: touch.clientY
-                        });
-                        startDrawing(mouseEvent as any);
-                    }}
+                    onTouchStart={startDrawing}
                     onTouchMove={(e) => {
-                        const touch = e.touches[0];
-                        const mouseEvent = new MouseEvent('mousemove', {
-                            clientX: touch.clientX,
-                            clientY: touch.clientY
-                        });
                         const canvas = canvasRef.current;
                         if (!canvas) return;
                         const context = canvas.getContext('2d');
-                        if (context) draw(mouseEvent as any, context);
+                        if (context) draw(e, context);
                     }}
-
                     onTouchEnd={endDrawing}
                 />
             </div>
@@ -189,5 +206,3 @@ const Canvas = () => {
 };
 
 export default Canvas;
-
-
