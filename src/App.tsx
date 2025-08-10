@@ -29,7 +29,7 @@ const tg = window.Telegram.WebApp;
 function App() {
   const [click, setClick] = useState<number>(0);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
-  const [listBoost, setListBoost] = useState<Boost[]>([
+  const [listBoost] = useState<Boost[]>([
     {
       id: 1,
       title: "+5 clicks",
