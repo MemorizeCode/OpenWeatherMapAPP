@@ -1,46 +1,100 @@
-import { useEffect, useState } from 'react'
-import './App.css'
+import { useEffect, useState } from 'react';
+import './App.css';
+import './Shop.css';
 
-const tg = window.Telegram.WebApp
+interface Boost {
+  id: number;
+  title: string;
+  price: number;
+  value: number;
+  description: string;
+  active: boolean;
+}
+
+
+declare global {
+  interface Window {
+    Telegram: {
+      WebApp: {
+        ready: () => void;
+        expand: () => void;
+        showAlert: (message: string) => void;
+      };
+    };
+  }
+}
+
+const tg = window.Telegram.WebApp;
 
 function App() {
-  const [click, setClick] = useState(0)
-  const [isAnimating, setIsAnimating] = useState(false)
-  const [activatedBoosts, setActivatedBoosts] = useState([])
-  const [clickPlus, setClickPlus] = useState(1)
+  const [click, setClick] = useState<number>(0);
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
+  const [listBoost, setListBoost] = useState<Boost[]>([
+    {
+      id: 1,
+      title: "+5 clicks",
+      price: 30,
+      value: 5,
+      description: "Basic boost - adds 5 clicks per tap",
+      active: false
+    },
+    {
+      id: 2,
+      title: "+10 clicks",
+      price: 120,
+      value: 10,
+      description: "Medium boost - adds 10 clicks per tap",
+      active: false
+    },
+    {
+      id: 3,
+      title: "+25 clicks",
+      price: 300,
+      value: 25,
+      description: "Advanced boost - adds 25 clicks per tap",
+      active: false
+    },
+    {
+      id: 4,
+      title: "+50 clicks",
+      price: 1000,
+      value: 50,
+      description: "Super boost - adds 50 clicks per tap",
+      active: false
+    }
+  ]);
+  const [activeBoost, setActiveBoost] = useState<Boost[]>([]);
+  const [clickPlus, setClickPlus] = useState<number>(1);
 
   useEffect(() => {
-    tg.ready()
+    tg.ready();
     // Раскрыть WebApp на весь экран
     // tg.expand() 
-  }, [])
+  }, []);
 
   const handleClick = () => {
-    setClick(prev => prev + clickPlus)
-    setIsAnimating(true)
-    setTimeout(() => setIsAnimating(false), 300)
-  }
+    setClick(prev => prev + clickPlus);
+    setIsAnimating(true);
+    setTimeout(() => setIsAnimating(false), 300);
+  };
 
-  const byBoost = (price: number, plusClick: number, id: number) => {
-    const findBoost = activatedBoosts.find((el: any) => el.id == id)
-    if (findBoost) {
-      // @ts-ignore
+  const buyBoost = (price: number, plusClick: number, id: number, boost: Boost) => {
+    const findBoost = activeBoost.find((el) => el.id === id);
+    
+    if (findBoost?.active) {
       tg.showAlert(`Такой буст уже есть!`);
     }
     else {
       if (price > click) {
-        // @ts-ignore
         tg.showAlert(`Мало кликов!`);
       }
       else {
-        setClick((prev) => prev - price)
-        setClickPlus((prev) => prev + plusClick)
-        // @ts-ignore
-        setActivatedBoosts([...activatedBoosts, { id: id, title: `+${plusClick} clicks` }])
-
+        setClick((prev) => prev - price);
+        setClickPlus((prev) => prev + plusClick);
+        setActiveBoost([...activeBoost, { ...boost, active: true }]);
       }
     }
-  }
+  };
 
   return (
     <div className="app">
@@ -48,7 +102,6 @@ function App() {
         <h1>React Clicker</h1>
         <p>Cool react clicker</p>
       </header>
-
       <main className="main-content">
         <p>In one click: {clickPlus}</p>
         <div className={`click-display ${isAnimating ? 'pulse' : ''}`}>
@@ -62,32 +115,42 @@ function App() {
         >
           CLICK ME!
         </button>
-
-
-        <p>Shop</p>
-        <div className="shop">
-          <button onClick={() => byBoost(30, 5, 1)}>+5 clicks - 30 click</button>
-          <button onClick={() => byBoost(120, 10, 2)}>+10 clicks - 120 click</button>
-        </div>
-
-        <div className='boost'>
-          <p>Activated boosters</p>
-          {
-            activatedBoosts.length > 0 ?
-              activatedBoosts.map((el: any) => {
-                return (<p key={el.id}>{el.title}</p>)
-              })
-              :
-              <p>! Нету бустов !</p>
-          }
-        </div>
       </main>
+
+      <div className="shop-container">
+        <h2>Boost Shop</h2>
+
+        <div className="boosts-grid">
+          {listBoost.map(boost => {
+            const canBuy = activeBoost.some(e => e.id === boost.id && e.active);
+
+            return (
+              <div
+                key={boost.id}
+                className={`boost-card`}
+              >
+                <h3>{boost.title}</h3>
+                <p>{boost.description}</p>
+                <div className="boost-footer">
+                  <span className="price">{boost.price} clicks</span>
+                  <button
+                    disabled={canBuy}
+                    onClick={() => buyBoost(boost.price, boost.value, boost.id, boost)}
+                  >
+                    Buy
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
       <footer className="footer">
         <p>:)</p>
       </footer>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
